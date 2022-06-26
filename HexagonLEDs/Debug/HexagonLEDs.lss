@@ -1,0 +1,574 @@
+
+HexagonLEDs.elf:     file format elf32-avr
+
+Sections:
+Idx Name          Size      VMA       LMA       File off  Algn
+  0 .text         00000224  00000000  00000000  00000074  2**1
+                  CONTENTS, ALLOC, LOAD, READONLY, CODE
+  1 .data         00000000  00800040  00800040  00000298  2**0
+                  CONTENTS, ALLOC, LOAD, DATA
+  2 .bss          00000004  00800040  00800040  00000298  2**0
+                  ALLOC
+  3 .comment      00000030  00000000  00000000  00000298  2**0
+                  CONTENTS, READONLY
+  4 .note.gnu.avr.deviceinfo 0000003c  00000000  00000000  000002c8  2**2
+                  CONTENTS, READONLY
+  5 .debug_aranges 00000060  00000000  00000000  00000304  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  6 .debug_info   000007d4  00000000  00000000  00000364  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  7 .debug_abbrev 000005da  00000000  00000000  00000b38  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  8 .debug_line   000005ba  00000000  00000000  00001112  2**0
+                  CONTENTS, READONLY, DEBUGGING
+  9 .debug_frame  00000098  00000000  00000000  000016cc  2**2
+                  CONTENTS, READONLY, DEBUGGING
+ 10 .debug_str    0000035f  00000000  00000000  00001764  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 11 .debug_loc    00000252  00000000  00000000  00001ac3  2**0
+                  CONTENTS, READONLY, DEBUGGING
+ 12 .debug_ranges 00000058  00000000  00000000  00001d15  2**0
+                  CONTENTS, READONLY, DEBUGGING
+
+Disassembly of section .text:
+
+00000000 <__vectors>:
+   0:	0a c0       	rjmp	.+20     	; 0x16 <__ctors_end>
+   2:	19 c0       	rjmp	.+50     	; 0x36 <__bad_interrupt>
+   4:	18 c0       	rjmp	.+48     	; 0x36 <__bad_interrupt>
+   6:	17 c0       	rjmp	.+46     	; 0x36 <__bad_interrupt>
+   8:	16 c0       	rjmp	.+44     	; 0x36 <__bad_interrupt>
+   a:	15 c0       	rjmp	.+42     	; 0x36 <__bad_interrupt>
+   c:	14 c0       	rjmp	.+40     	; 0x36 <__bad_interrupt>
+   e:	13 c0       	rjmp	.+38     	; 0x36 <__bad_interrupt>
+  10:	12 c0       	rjmp	.+36     	; 0x36 <__bad_interrupt>
+  12:	11 c0       	rjmp	.+34     	; 0x36 <__bad_interrupt>
+  14:	10 c0       	rjmp	.+32     	; 0x36 <__bad_interrupt>
+
+00000016 <__ctors_end>:
+  16:	11 27       	eor	r17, r17
+  18:	1f bf       	out	0x3f, r17	; 63
+  1a:	cf e5       	ldi	r28, 0x5F	; 95
+  1c:	d0 e0       	ldi	r29, 0x00	; 0
+  1e:	de bf       	out	0x3e, r29	; 62
+  20:	cd bf       	out	0x3d, r28	; 61
+
+00000022 <__do_clear_bss>:
+  22:	20 e0       	ldi	r18, 0x00	; 0
+  24:	a0 e4       	ldi	r26, 0x40	; 64
+  26:	b0 e0       	ldi	r27, 0x00	; 0
+  28:	01 c0       	rjmp	.+2      	; 0x2c <.do_clear_bss_start>
+
+0000002a <.do_clear_bss_loop>:
+  2a:	1d 93       	st	X+, r17
+
+0000002c <.do_clear_bss_start>:
+  2c:	a4 34       	cpi	r26, 0x44	; 68
+  2e:	b2 07       	cpc	r27, r18
+  30:	e1 f7       	brne	.-8      	; 0x2a <.do_clear_bss_loop>
+  32:	23 d0       	rcall	.+70     	; 0x7a <main>
+  34:	f5 c0       	rjmp	.+490    	; 0x220 <_exit>
+
+00000036 <__bad_interrupt>:
+  36:	e4 cf       	rjmp	.-56     	; 0x0 <__vectors>
+
+00000038 <init>:
+#include "General.h"
+#include "TinyTouchLib.h"
+
+void init(){
+	
+	CCP = 0xD8; //Unlock protected registers
+  38:	48 ed       	ldi	r20, 0xD8	; 216
+  3a:	4c bf       	out	0x3c, r20	; 60
+	CLKPSR = 0x00;	//Set clock prescaler to 1
+  3c:	16 bf       	out	0x36, r17	; 54
+	CLKMSR = 0x00;  
+  3e:	17 bf       	out	0x37, r17	; 55
+	//Pin Configuration: PB0: Comm Port, PB1: Touch Input, PB2: FET Gate 
+	DDRB = GATE_MASK; //Only set FET Gate to Output
+  40:	44 e0       	ldi	r20, 0x04	; 4
+  42:	41 b9       	out	0x01, r20	; 1
+  44:	08 95       	ret
+
+00000046 <fadeLEDs>:
+			}
+			PORTB &= ~GATE_MASK;
+		}
+		*/
+	
+	for(u8 i = 0; i < 255; i++){
+  46:	60 e0       	ldi	r22, 0x00	; 0
+  48:	15 c0       	rjmp	.+42     	; 0x74 <__stack+0x15>
+		for(u8 j = 0; j < 255; j++){
+			if((dir && (j > i)) || (!dir && (j <= i))){
+  4a:	88 23       	and	r24, r24
+  4c:	11 f0       	breq	.+4      	; 0x52 <fadeLEDs+0xc>
+  4e:	64 17       	cp	r22, r20
+  50:	20 f0       	brcs	.+8      	; 0x5a <fadeLEDs+0x14>
+  52:	81 13       	cpse	r24, r17
+  54:	06 c0       	rjmp	.+12     	; 0x62 <__stack+0x3>
+  56:	64 17       	cp	r22, r20
+  58:	20 f0       	brcs	.+8      	; 0x62 <__stack+0x3>
+				PORTB &= ~GATE_MASK; //Turn off
+  5a:	52 b1       	in	r21, 0x02	; 2
+  5c:	5b 7f       	andi	r21, 0xFB	; 251
+  5e:	52 b9       	out	0x02, r21	; 2
+  60:	03 c0       	rjmp	.+6      	; 0x68 <__stack+0x9>
+				} else {
+				PORTB |= GATE_MASK; //Turn on for the rest
+  62:	52 b1       	in	r21, 0x02	; 2
+  64:	54 60       	ori	r21, 0x04	; 4
+  66:	52 b9       	out	0x02, r21	; 2
+			PORTB &= ~GATE_MASK;
+		}
+		*/
+	
+	for(u8 i = 0; i < 255; i++){
+		for(u8 j = 0; j < 255; j++){
+  68:	4f 5f       	subi	r20, 0xFF	; 255
+  6a:	01 c0       	rjmp	.+2      	; 0x6e <__stack+0xf>
+  6c:	40 e0       	ldi	r20, 0x00	; 0
+  6e:	4f 3f       	cpi	r20, 0xFF	; 255
+  70:	61 f7       	brne	.-40     	; 0x4a <fadeLEDs+0x4>
+			}
+			PORTB &= ~GATE_MASK;
+		}
+		*/
+	
+	for(u8 i = 0; i < 255; i++){
+  72:	6f 5f       	subi	r22, 0xFF	; 255
+  74:	6f 3f       	cpi	r22, 0xFF	; 255
+  76:	d1 f7       	brne	.-12     	; 0x6c <__stack+0xd>
+				PORTB |= GATE_MASK; //Turn on for the rest
+			}
+		}
+	}
+	#endif
+}
+  78:	08 95       	ret
+
+0000007a <main>:
+
+int main(void){
+	u8 ledState = 0; 
+	
+	/*Initialize the touch library and initialize ports*/
+	init();
+  7a:	de df       	rcall	.-68     	; 0x38 <init>
+	tinytouch_init();
+  7c:	6b d0       	rcall	.+214    	; 0x154 <tinytouch_init>
+	}
+	#endif
+}
+
+int main(void){
+	u8 ledState = 0; 
+  7e:	d0 e0       	ldi	r29, 0x00	; 0
+	tinytouch_init();
+	
+    while (1){
+		
+		//The touch button was pushed
+		if(tinytouch_sense() == tt_push){ 
+  80:	73 d0       	rcall	.+230    	; 0x168 <tinytouch_sense>
+  82:	82 30       	cpi	r24, 0x02	; 2
+  84:	e9 f4       	brne	.+58     	; 0xc0 <main+0x46>
+			
+			//Wait for release of button
+			//while(tinytouch_sense() != tt_release){}
+			
+			//Toggle LED state and set the output	
+			ledState = ~ledState;
+  86:	d0 95       	com	r29
+			fadeLEDs(ledState);
+  88:	8d 2f       	mov	r24, r29
+  8a:	dd df       	rcall	.-70     	; 0x46 <fadeLEDs>
+			
+			/*This code is there so that with a double press all the other leds are toggled*/
+			
+			//Initialize a counter variable to keep track of the time.
+			//The goal is to have a window after the first push in which a second push triggers the COMM port to toggle all other modules.
+			u8 counter = 0; 
+  8c:	c0 e0       	ldi	r28, 0x00	; 0
+			
+			//Wait for a potential second push of the button. The inner things of the while loop take around 5ms, so the total window is around a second.
+			while((tinytouch_sense() != tt_push) && (counter <= 200)){
+  8e:	01 c0       	rjmp	.+2      	; 0x92 <main+0x18>
+				//_delay_ms(1);
+				counter++; 
+  90:	cf 5f       	subi	r28, 0xFF	; 255
+			//Initialize a counter variable to keep track of the time.
+			//The goal is to have a window after the first push in which a second push triggers the COMM port to toggle all other modules.
+			u8 counter = 0; 
+			
+			//Wait for a potential second push of the button. The inner things of the while loop take around 5ms, so the total window is around a second.
+			while((tinytouch_sense() != tt_push) && (counter <= 200)){
+  92:	6a d0       	rcall	.+212    	; 0x168 <tinytouch_sense>
+  94:	82 30       	cpi	r24, 0x02	; 2
+  96:	11 f0       	breq	.+4      	; 0x9c <main+0x22>
+  98:	c9 3c       	cpi	r28, 0xC9	; 201
+  9a:	d0 f3       	brcs	.-12     	; 0x90 <main+0x16>
+				counter++; 
+			}
+			
+			//If the button has been pressed, the while loop breaks with the counter staying under 200.
+			//Send a message on the COMM port.
+			if(counter < 200){
+  9c:	c8 3c       	cpi	r28, 0xC8	; 200
+  9e:	80 f4       	brcc	.+32     	; 0xc0 <main+0x46>
+				DDRB = GATE_MASK | COMM_MASK;
+  a0:	45 e0       	ldi	r20, 0x05	; 5
+  a2:	41 b9       	out	0x01, r20	; 1
+				//Set COMM to low to signal other modules
+				PORTB &= ~COMM_MASK;
+  a4:	42 b1       	in	r20, 0x02	; 2
+  a6:	4e 7f       	andi	r20, 0xFE	; 254
+  a8:	42 b9       	out	0x02, r20	; 2
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  aa:	4f ef       	ldi	r20, 0xFF	; 255
+  ac:	50 e7       	ldi	r21, 0x70	; 112
+  ae:	62 e0       	ldi	r22, 0x02	; 2
+  b0:	41 50       	subi	r20, 0x01	; 1
+  b2:	50 40       	sbci	r21, 0x00	; 0
+  b4:	60 40       	sbci	r22, 0x00	; 0
+  b6:	e1 f7       	brne	.-8      	; 0xb0 <main+0x36>
+  b8:	00 c0       	rjmp	.+0      	; 0xba <main+0x40>
+  ba:	00 00       	nop
+				_delay_ms(100);
+			
+				//Set COMM to tri state
+				//PORTB |= COMM_MASK;
+				DDRB = GATE_MASK;
+  bc:	44 e0       	ldi	r20, 0x04	; 4
+  be:	41 b9       	out	0x01, r20	; 1
+				//_delay_ms(100);
+			}
+		}
+		
+		//look for a message on the COMM port.
+		if(!((PINB & COMM_MASK) == COMM_MASK)){
+  c0:	00 99       	sbic	0x00, 0	; 0
+  c2:	de cf       	rjmp	.-68     	; 0x80 <main+0x6>
+			
+			//Toggle the LED state.
+			ledState = ~ledState;
+  c4:	d0 95       	com	r29
+			fadeLEDs(ledState);
+  c6:	8d 2f       	mov	r24, r29
+  c8:	be df       	rcall	.-132    	; 0x46 <fadeLEDs>
+  ca:	da cf       	rjmp	.-76     	; 0x80 <main+0x6>
+
+000000cc <tinytouch_adc>:
+uint16_t tinytouch_adc(void){ //u8
+
+	uint8_t dat1,dat2;
+
+	// Precharge Low
+	ADMUX	=tt_refadc;	// connect S/H cap to reference pin	
+  cc:	42 e0       	ldi	r20, 0x02	; 2
+  ce:	4b bb       	out	0x1b, r20	; 27
+	PORTB |= _BV(tt_refpin);		// Charge S/H Cap 
+  d0:	42 b1       	in	r20, 0x02	; 2
+  d2:	44 60       	ori	r20, 0x04	; 4
+  d4:	42 b9       	out	0x02, r20	; 2
+	PORTB &=~_BV(tt_sensepin);		// Discharge Pad (0)
+  d6:	42 b1       	in	r20, 0x02	; 2
+  d8:	4d 7f       	andi	r20, 0xFD	; 253
+  da:	42 b9       	out	0x02, r20	; 2
+	DDRB  |= _BV(tt_refpin)|_BV(tt_sensepin);
+  dc:	41 b1       	in	r20, 0x01	; 1
+  de:	46 60       	ori	r20, 0x06	; 6
+  e0:	41 b9       	out	0x01, r20	; 1
+	#else
+		//round up by default
+		__ticks_dc = (uint32_t)(ceil(fabs(__tmp)));
+	#endif
+
+	__builtin_avr_delay_cycles(__ticks_dc);
+  e2:	4a e0       	ldi	r20, 0x0A	; 10
+  e4:	4a 95       	dec	r20
+  e6:	f1 f7       	brne	.-4      	; 0xe4 <tinytouch_adc+0x18>
+  e8:	00 c0       	rjmp	.+0      	; 0xea <tinytouch_adc+0x1e>
+		
+	_delay_us(TOUCH_DELAY);
+	
+	DDRB  &=~(_BV(tt_sensepin));	// float pad input, note that pull up is off.
+  ea:	41 b1       	in	r20, 0x01	; 1
+  ec:	4d 7f       	andi	r20, 0xFD	; 253
+  ee:	41 b9       	out	0x01, r20	; 1
+
+#ifdef __AVR_ATtiny10__
+	ADMUX	=tt_senseadc;	// Connect sense input to adc
+  f0:	41 e0       	ldi	r20, 0x01	; 1
+  f2:	4b bb       	out	0x1b, r20	; 27
+#else
+	ADMUX	=tt_senseadc|_BV(ADLAR);	// Connect sense input to adc
+#endif
+		
+	ADCSRA	|=_BV(ADSC); // Start conversion	
+  f4:	4d b3       	in	r20, 0x1d	; 29
+  f6:	40 64       	ori	r20, 0x40	; 64
+  f8:	4d bb       	out	0x1d, r20	; 29
+	while (!(ADCSRA&_BV(ADIF)));		
+  fa:	ec 9b       	sbis	0x1d, 4	; 29
+  fc:	fe cf       	rjmp	.-4      	; 0xfa <tinytouch_adc+0x2e>
+	ADCSRA	|=_BV(ADIF); // Clear ADIF
+  fe:	4d b3       	in	r20, 0x1d	; 29
+ 100:	40 61       	ori	r20, 0x10	; 16
+ 102:	4d bb       	out	0x1d, r20	; 29
+
+#ifdef __AVR_ATtiny10__
+	dat1=ADCL;
+ 104:	59 b3       	in	r21, 0x19	; 25
+#else
+	dat1=ADCH;
+#endif
+
+	// Precharge High
+	ADMUX  =tt_refadc;	// connect S/H cap to reference pin
+ 106:	42 e0       	ldi	r20, 0x02	; 2
+ 108:	4b bb       	out	0x1b, r20	; 27
+	PORTB &=~_BV(tt_refpin);		// Discharge S/H Cap
+ 10a:	42 b1       	in	r20, 0x02	; 2
+ 10c:	4b 7f       	andi	r20, 0xFB	; 251
+ 10e:	42 b9       	out	0x02, r20	; 2
+	PORTB |= _BV(tt_sensepin);		// Charge Pad 
+ 110:	42 b1       	in	r20, 0x02	; 2
+ 112:	42 60       	ori	r20, 0x02	; 2
+ 114:	42 b9       	out	0x02, r20	; 2
+	DDRB  |= _BV(tt_refpin)|_BV(tt_sensepin);
+ 116:	41 b1       	in	r20, 0x01	; 1
+ 118:	46 60       	ori	r20, 0x06	; 6
+ 11a:	41 b9       	out	0x01, r20	; 1
+ 11c:	4a e0       	ldi	r20, 0x0A	; 10
+ 11e:	4a 95       	dec	r20
+ 120:	f1 f7       	brne	.-4      	; 0x11e <tinytouch_adc+0x52>
+ 122:	00 c0       	rjmp	.+0      	; 0x124 <tinytouch_adc+0x58>
+			
+	_delay_us(TOUCH_DELAY);
+
+	DDRB  &=~(_BV(tt_sensepin));	// float pad input input
+ 124:	41 b1       	in	r20, 0x01	; 1
+ 126:	4d 7f       	andi	r20, 0xFD	; 253
+ 128:	41 b9       	out	0x01, r20	; 1
+	PORTB &=~_BV(tt_sensepin);		// pull up off
+ 12a:	42 b1       	in	r20, 0x02	; 2
+ 12c:	4d 7f       	andi	r20, 0xFD	; 253
+ 12e:	42 b9       	out	0x02, r20	; 2
+
+#ifdef __AVR_ATtiny10__
+	ADMUX	=tt_senseadc;	// Connect sense input to adc
+ 130:	41 e0       	ldi	r20, 0x01	; 1
+ 132:	4b bb       	out	0x1b, r20	; 27
+#else
+	ADMUX	=tt_senseadc|_BV(ADLAR);	// Connect sense input to adc
+#endif
+							
+	ADCSRA	|=_BV(ADSC); // Start conversion	
+ 134:	4d b3       	in	r20, 0x1d	; 29
+ 136:	40 64       	ori	r20, 0x40	; 64
+ 138:	4d bb       	out	0x1d, r20	; 29
+	while (!(ADCSRA&_BV(ADIF)));
+ 13a:	ec 9b       	sbis	0x1d, 4	; 29
+ 13c:	fe cf       	rjmp	.-4      	; 0x13a <tinytouch_adc+0x6e>
+	ADCSRA	|=_BV(ADIF); // Clear ADIF
+ 13e:	4d b3       	in	r20, 0x1d	; 29
+ 140:	40 61       	ori	r20, 0x10	; 16
+ 142:	4d bb       	out	0x1d, r20	; 29
+
+#ifdef __AVR_ATtiny10__
+	dat2=ADCL;
+ 144:	49 b3       	in	r20, 0x19	; 25
+#else
+	dat2=ADCH;
+#endif
+	
+
+	return (255 - dat1 + dat2); //dat2-dat1;
+ 146:	8f ef       	ldi	r24, 0xFF	; 255
+ 148:	90 e0       	ldi	r25, 0x00	; 0
+ 14a:	85 1b       	sub	r24, r21
+ 14c:	91 0b       	sbc	r25, r17
+ 14e:	84 0f       	add	r24, r20
+ 150:	91 1f       	adc	r25, r17
+}
+ 152:	08 95       	ret
+
+00000154 <tinytouch_init>:
+*/	
+
+void	tinytouch_init(void) {
+
+#ifndef __AVR_ATtiny13__	
+	PRR		&=~_BV(PRADC);
+ 154:	45 b7       	in	r20, 0x35	; 53
+ 156:	4d 7f       	andi	r20, 0xFD	; 253
+ 158:	45 bf       	out	0x35, r20	; 53
+#endif	
+	ADCSRA	=_BV(ADEN)|_BV(ADPS2)|_BV(ADPS1); // Enable ADC, Set prescaler to 64
+ 15a:	46 e8       	ldi	r20, 0x86	; 134
+ 15c:	4d bb       	out	0x1d, r20	; 29
+		
+	bias=tinytouch_adc()<<8;
+ 15e:	b6 df       	rcall	.-148    	; 0xcc <tinytouch_adc>
+ 160:	12 a9       	sts	0x42, r17	; 0x800042 <bias>
+ 162:	83 a9       	sts	0x43, r24	; 0x800043 <bias+0x1>
+	touch=0;
+ 164:	10 a9       	sts	0x40, r17	; 0x800040 <__DATA_REGION_ORIGIN__>
+ 166:	08 95       	ret
+
+00000168 <tinytouch_sense>:
+}
+
+uint8_t tinytouch_sense(void) {
+ 168:	3f 93       	push	r19
+ 16a:	cf 93       	push	r28
+ 16c:	df 93       	push	r29
+	uint8_t i;
+	uint16_t tmp;
+	int16_t delta;
+
+	tmp=0;
+ 16e:	c0 e0       	ldi	r28, 0x00	; 0
+ 170:	d0 e0       	ldi	r29, 0x00	; 0
+	for (i=0; i<16; i++) {
+ 172:	30 e0       	ldi	r19, 0x00	; 0
+ 174:	08 c0       	rjmp	.+16     	; 0x186 <tinytouch_sense+0x1e>
+		tmp+=tinytouch_adc();	// average 16 samples
+ 176:	aa df       	rcall	.-172    	; 0xcc <tinytouch_adc>
+ 178:	c8 0f       	add	r28, r24
+ 17a:	d9 1f       	adc	r29, r25
+ 17c:	41 e2       	ldi	r20, 0x21	; 33
+ 17e:	4a 95       	dec	r20
+ 180:	f1 f7       	brne	.-4      	; 0x17e <tinytouch_sense+0x16>
+ 182:	00 00       	nop
+	uint8_t i;
+	uint16_t tmp;
+	int16_t delta;
+
+	tmp=0;
+	for (i=0; i<16; i++) {
+ 184:	3f 5f       	subi	r19, 0xFF	; 255
+ 186:	30 31       	cpi	r19, 0x10	; 16
+ 188:	b0 f3       	brcs	.-20     	; 0x176 <tinytouch_sense+0xe>
+		tmp+=tinytouch_adc();	// average 16 samples
+		_delay_us(100);
+	}
+
+	delta=tmp-(bias>>4);
+ 18a:	42 a1       	lds	r20, 0x42	; 0x800042 <bias>
+ 18c:	53 a1       	lds	r21, 0x43	; 0x800043 <bias+0x1>
+ 18e:	64 2f       	mov	r22, r20
+ 190:	75 2f       	mov	r23, r21
+ 192:	72 95       	swap	r23
+ 194:	62 95       	swap	r22
+ 196:	6f 70       	andi	r22, 0x0F	; 15
+ 198:	67 27       	eor	r22, r23
+ 19a:	7f 70       	andi	r23, 0x0F	; 15
+ 19c:	67 27       	eor	r22, r23
+ 19e:	8c 2f       	mov	r24, r28
+ 1a0:	9d 2f       	mov	r25, r29
+ 1a2:	86 1b       	sub	r24, r22
+ 1a4:	97 0b       	sbc	r25, r23
+ 1a6:	68 2f       	mov	r22, r24
+ 1a8:	79 2f       	mov	r23, r25
+			
+	if (!touch)	{
+ 1aa:	80 a1       	lds	r24, 0x40	; 0x800040 <__DATA_REGION_ORIGIN__>
+ 1ac:	81 13       	cpse	r24, r17
+ 1ae:	1e c0       	rjmp	.+60     	; 0x1ec <tinytouch_sense+0x84>
+		if (delta>touch_threshold_on) {
+ 1b0:	6d 33       	cpi	r22, 0x3D	; 61
+ 1b2:	71 07       	cpc	r23, r17
+ 1b4:	2c f0       	brlt	.+10     	; 0x1c0 <tinytouch_sense+0x58>
+			touch=1;
+ 1b6:	41 e0       	ldi	r20, 0x01	; 1
+ 1b8:	40 a9       	sts	0x40, r20	; 0x800040 <__DATA_REGION_ORIGIN__>
+#if touch_timeout>0
+			timer=0;					
+ 1ba:	11 a9       	sts	0x41, r17	; 0x800041 <timer>
+#endif
+			return tt_push;
+ 1bc:	82 e0       	ldi	r24, 0x02	; 2
+ 1be:	2c c0       	rjmp	.+88     	; 0x218 <tinytouch_sense+0xb0>
+		}
+
+		// update bias only when touch not active
+		bias=(bias-(bias>>6))+(tmp>>2);		// IIR low pass
+ 1c0:	64 2f       	mov	r22, r20
+ 1c2:	75 2f       	mov	r23, r21
+ 1c4:	00 27       	eor	r16, r16
+ 1c6:	66 0f       	add	r22, r22
+ 1c8:	77 1f       	adc	r23, r23
+ 1ca:	00 1f       	adc	r16, r16
+ 1cc:	66 0f       	add	r22, r22
+ 1ce:	77 1f       	adc	r23, r23
+ 1d0:	00 1f       	adc	r16, r16
+ 1d2:	67 2f       	mov	r22, r23
+ 1d4:	70 2f       	mov	r23, r16
+ 1d6:	46 1b       	sub	r20, r22
+ 1d8:	57 0b       	sbc	r21, r23
+ 1da:	d6 95       	lsr	r29
+ 1dc:	c7 95       	ror	r28
+ 1de:	d6 95       	lsr	r29
+ 1e0:	c7 95       	ror	r28
+ 1e2:	c4 0f       	add	r28, r20
+ 1e4:	d5 1f       	adc	r29, r21
+ 1e6:	d3 a9       	sts	0x43, r29	; 0x800043 <bias+0x1>
+ 1e8:	c2 a9       	sts	0x42, r28	; 0x800042 <bias>
+		return tt_off;		
+ 1ea:	16 c0       	rjmp	.+44     	; 0x218 <tinytouch_sense+0xb0>
+	} else {
+		if (delta<touch_threshold_off) {
+ 1ec:	64 31       	cpi	r22, 0x14	; 20
+ 1ee:	71 07       	cpc	r23, r17
+ 1f0:	1c f4       	brge	.+6      	; 0x1f8 <tinytouch_sense+0x90>
+			touch=0;
+ 1f2:	10 a9       	sts	0x40, r17	; 0x800040 <__DATA_REGION_ORIGIN__>
+			return tt_release;
+ 1f4:	83 e0       	ldi	r24, 0x03	; 3
+ 1f6:	10 c0       	rjmp	.+32     	; 0x218 <tinytouch_sense+0xb0>
+		}
+
+#if touch_timeout>0		
+		if (timer==255) {
+ 1f8:	41 a1       	lds	r20, 0x41	; 0x800041 <timer>
+ 1fa:	4f 3f       	cpi	r20, 0xFF	; 255
+ 1fc:	51 f4       	brne	.+20     	; 0x212 <tinytouch_sense+0xaa>
+			bias=tinytouch_adc()<<7; //8		
+ 1fe:	66 df       	rcall	.-308    	; 0xcc <tinytouch_adc>
+ 200:	96 95       	lsr	r25
+ 202:	98 2f       	mov	r25, r24
+ 204:	88 27       	eor	r24, r24
+ 206:	97 95       	ror	r25
+ 208:	87 95       	ror	r24
+ 20a:	93 a9       	sts	0x43, r25	; 0x800043 <bias+0x1>
+ 20c:	82 a9       	sts	0x42, r24	; 0x800042 <bias>
+			return tt_timeout;
+ 20e:	84 e0       	ldi	r24, 0x04	; 4
+ 210:	03 c0       	rjmp	.+6      	; 0x218 <tinytouch_sense+0xb0>
+		} 
+		timer++;
+ 212:	4f 5f       	subi	r20, 0xFF	; 255
+ 214:	41 a9       	sts	0x41, r20	; 0x800041 <timer>
+#endif						
+		return tt_on;
+ 216:	81 e0       	ldi	r24, 0x01	; 1
+	}
+}	
+ 218:	df 91       	pop	r29
+ 21a:	cf 91       	pop	r28
+ 21c:	3f 91       	pop	r19
+ 21e:	08 95       	ret
+
+00000220 <_exit>:
+ 220:	f8 94       	cli
+
+00000222 <__stop_program>:
+ 222:	ff cf       	rjmp	.-2      	; 0x222 <__stop_program>
